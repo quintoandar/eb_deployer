@@ -25,6 +25,11 @@ class Command(BaseCommand):
   
 	def handle(self, *args, **options):
 		ENV = options.get('environment')
+
+		if not ENV or (ENV != 'producao' and ENV != 'forno'):
+			print 'Especify an environment: -e (producao|forno)'
+			return
+
 		COMMIT = options.get('commit')
 		SKIP_STATIC = options.get('skip_static')
 		ACCESS_KEY = EB_DEPLOYER_SETTINGS.get(ENV).get("ACCESS_KEY")
@@ -33,9 +38,6 @@ class Command(BaseCommand):
 		ENVIRONMENT_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("ENVIRONMENT_NAME")
 		APPLICATION_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("APPLICATION_NAME")
 		
-		if not ENV or (ENV != 'producao' and ENV != 'forno'):
-			print 'Especify an environment: (producao|forno)'
-			return
 		
 		print 'Deploying to: ' + ENV + '...'
 
@@ -65,41 +67,82 @@ class Command(BaseCommand):
 			if ENV == 'forno':
 				self.cmd([
 					'./s3cmd/s3cmd',
-					'--dry-run',
+					#'--dry-run',
 					'--mime-type=application/x-javascript', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
 					'--add-header="Content-Encoding: gzip"',
-					'sync', 	
+					'put', 	
 					'./*_f.js.jgz', 
 					's3://5ares/searchStatic/js/',
 					'--config=../../../s3cmd.conf'
 				])
 				self.cmd([
 					'./s3cmd/s3cmd',
-					'--dry-run',
+					#'--dry-run',
+					'--mime-type=text/css', 
+					'-P',
+					'--add-header="Cache-Control: max-age=60"', 
+					'--add-header="Content-Encoding: gzip"',
+					'put', 	
+					'./*_f.cgz', 
+					's3://5ares/searchStatic/css/',
+					'--config=../../../s3cmd.conf'
+				])
+			elif ENV == 'producao':
+				self.cmd([
+					'./s3cmd/s3cmd',
+					#'--dry-run',
 					'--mime-type=application/x-javascript', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
 					'--add-header="Content-Encoding: gzip"',
-					'sync', 	
-					'./*_f.js.jgz', 
-					's3://5ares/searchStatic/js/',
+					'put', 	
+					'./*.js.jgz', 
+					'--exclude="*_f.js.jgz"',
+					's3://5ares/searchStaticProducao/js/',
+					'--config=../../../s3cmd.conf'
+				])
+				self.cmd([
+					'./s3cmd/s3cmd',
+					#'--dry-run',
+					'--mime-type=text/css', 
+					'-P',
+					'--add-header="Cache-Control: max-age=60"', 
+					'--add-header="Content-Encoding: gzip"',
+					'put', 	
+					'./*.cgz', 
+					'--exclude="*_f.cgz"',
+					's3://5ares/searchStaticProducao/css/',
+					'--config=../../../s3cmd.conf'
+				])
+				self.cmd([
+					'./s3cmd/s3cmd',
+					#'--dry-run',
+					'--mime-type=application/x-javascript', 
+					'-P',
+					'--add-header="Cache-Control: max-age=60"', 
+					'put',
+					'../js/*.js', 
+					's3://5ares/searchStaticProducao/js/',
+					'--config=../../../s3cmd.conf'
+				])
+				self.cmd([
+					'./s3cmd/s3cmd',
+					#'--dry-run',
+					'--mime-type=text/css', 
+					'-P',
+					'--add-header="Cache-Control: max-age=60"', 
+					'put', 	
+					'../css/*.css', 
+					's3://5ares/searchStaticProducao/css/',
 					'--config=../../../s3cmd.conf'
 				])
 
-				#'./s3cmd/s3cmd --dry-run --mime-type=application/x-javascript -P --add-header="Cache-Control: max-age=60" --add-header="Content-Encoding: gzip" sync ./*_f.js.jgz s3://5ares/searchStatic/js/ --config=../../../s3cmd.conf'
 			print 'Done pushing static files to S3!'
 
 		print 'Done deploying to: ' + ENV + '!'
 
 	def cmd(self, command, shell=False):
 
-		#p = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		#out, err = p.communicate()
 		os.system(" ".join(command))
-		#self.stdout.write(out)
-		#if err:
-			#print err.decode('utf-8')
-
-
