@@ -21,6 +21,12 @@ class Command(BaseCommand):
 						default=False,
 						help='Skip pushing static files'
 					),
+					make_option('--access-key','-k',
+						help='AWS EB ACCESS_KEY'
+					),
+					make_option('--secret-key','-s',
+						help='AWS EB SECRET_KEY'
+					),
 				)
   
 	def handle(self, *args, **options):
@@ -32,8 +38,8 @@ class Command(BaseCommand):
 
 		COMMIT = options.get('commit')
 		SKIP_STATIC = options.get('skip_static')
-		ACCESS_KEY = EB_DEPLOYER_SETTINGS.get(ENV).get("ACCESS_KEY")
-		SECRET_KEY = EB_DEPLOYER_SETTINGS.get(ENV).get("SECRET_KEY")
+		ACCESS_KEY = options.get('access_key')
+		SECRET_KEY = options.get('secret_key')
 		REGION = EB_DEPLOYER_SETTINGS.get(ENV).get("REGION")
 		ENVIRONMENT_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("ENVIRONMENT_NAME")
 		APPLICATION_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("APPLICATION_NAME")
