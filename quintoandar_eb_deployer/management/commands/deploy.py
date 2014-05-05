@@ -74,6 +74,8 @@ class Command(BaseCommand):
 				self.cmd([
 					'./s3cmd/s3cmd',
 					#'--dry-run',
+					'--access-key=' + ACCESS_KEY,
+					'--secret-key=' + SECRET_KEY,
 					'--mime-type=application/x-javascript', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
@@ -86,6 +88,8 @@ class Command(BaseCommand):
 				self.cmd([
 					'./s3cmd/s3cmd',
 					#'--dry-run',
+					'--access-key=' + ACCESS_KEY,
+					'--secret-key=' + SECRET_KEY,
 					'--mime-type=text/css', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
@@ -99,6 +103,8 @@ class Command(BaseCommand):
 				self.cmd([
 					'./s3cmd/s3cmd',
 					#'--dry-run',
+					'--access-key=' + ACCESS_KEY,
+					'--secret-key=' + SECRET_KEY,
 					'--mime-type=application/x-javascript', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
@@ -112,6 +118,8 @@ class Command(BaseCommand):
 				self.cmd([
 					'./s3cmd/s3cmd',
 					#'--dry-run',
+					'--access-key=' + ACCESS_KEY,
+					'--secret-key=' + SECRET_KEY,
 					'--mime-type=text/css', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
@@ -125,6 +133,8 @@ class Command(BaseCommand):
 				self.cmd([
 					'./s3cmd/s3cmd',
 					#'--dry-run',
+					'--access-key=' + ACCESS_KEY,
+					'--secret-key=' + SECRET_KEY,
 					'--mime-type=application/x-javascript', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
@@ -136,6 +146,8 @@ class Command(BaseCommand):
 				self.cmd([
 					'./s3cmd/s3cmd',
 					#'--dry-run',
+					'--access-key=' + ACCESS_KEY,
+					'--secret-key=' + SECRET_KEY,
 					'--mime-type=text/css', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
