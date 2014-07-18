@@ -62,4 +62,4 @@ if __name__ == "__main__":
 	opts["commit"] = dev_tools.commit_id(args.commit)
 
     dev_tools.push_changes(opts.get("env"), opts.get("commit"))
-    print "Environment update initiated successfully."
+    print "\033[92mEnvironment update initiated successfully.\033[0m"
