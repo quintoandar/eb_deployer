@@ -101,7 +101,7 @@ class DevTools:
         try: 
 	    commit_message = check_output("git log -1 --pretty=format:%s {0}".format(commit), shell=True)
 	    if commit_message:
-		return commit_message.strip().decode('utf8')
+		return commit_message.encode('utf-8').strip()
         except (CalledProcessError, OSError) as e:
 	    return None
 
