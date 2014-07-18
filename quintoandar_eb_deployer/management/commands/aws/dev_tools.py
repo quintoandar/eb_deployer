@@ -163,7 +163,7 @@ class DevTools:
 	except InsufficientPrivileges as e:
 	    sys.exit("Error: Insufficient permissions to update the AWS Elastic Beanstalk environment. You must use AWS credentials that have the correct AWS Elastic Beanstalk permissions")
 	except Exception as e:
-	    sys.exit("\033[91mError: Failed to create the AWS Elastic Beanstalk application version\033[0m")
+	    sys.exit("\033[91mError: Failed to create the AWS Elastic Beanstalk application version: %s \033[0m" % e)
 
     def create_application_version(self, env, commit, version_label = None):
 	if not env:
