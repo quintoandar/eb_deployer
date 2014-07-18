@@ -76,7 +76,7 @@ class DevTools:
 	try:
 	    call("git archive {0} --format=zip > {1}".format(commit, filename), shell=True)
 	except (CalledProcessError, OSError) as e:
-	    sys.exit("Error: Cannot archive your repository due to an unknown error")
+	    sys.exit("\033[91mError: Cannot archive your repository due to an unknown error\033[0m")
 
     def commit_id(self, commit):
 	if not commit:
@@ -90,10 +90,10 @@ class DevTools:
 
 	    commit_type = self.git_object_type(commit)
 	    if "commit" != commit_type:
-		sys.exit("{0} is a {1}. The value of the --commit option must refer to commit".format(commit, commit_type))
+		sys.exit("{0} is a {1}. The value of the --commit option must refer to commit\033[0m".format(commit, commit_type))
 
         except (CalledProcessError, OSError) as e:
-	    sys.exit("Error: Cannot find revision {0}".format(commit))
+	    sys.exit("\033[91mError: Cannot find revision {0}\033[0m".format(commit))
 
 	return cmt_id
 
@@ -114,7 +114,7 @@ class DevTools:
 		return None 
 	    #beanstalk_config.branch_mappings[current_branch]
 	except (CalledProcessError, OSError) as e:
-	    sys.exit("Error: Cannot lookup current branch")
+	    sys.exit("\033[91mError: Cannot lookup current branch\033[0m")
 
     def version_label(self, commit):
 	epoch = int(time.time() * 1000)
@@ -126,17 +126,17 @@ class DevTools:
 	try:
 	    response = self.eb.create_storage_location()
 	except TooManyBuckets: 
-	    sys.exit("Error: You have exceeded the number of Amazon S3 buckets for your account")
+	    sys.exit("\033[91mError: You have exceeded the number of Amazon S3 buckets for your account\033[0m")
 	except InsufficientPrivileges:
-	    sys.exit("Error: Access was denied to the Amazon S3 bucket. You must use AWS credentials that have permissions to access the bucket")
+	    sys.exit("\033[91mError: Access was denied to the Amazon S3 bucket. You must use AWS credentials that have permissions to access the bucket\033[0m")
 	except Exception:
-	    sys.exit("Error: Failed to get the Amazon S3 bucket name")
+	    sys.exit("\033[91mError: Failed to get the Amazon S3 bucket name\033[0m")
 
 	if "CreateStorageLocationResponse" in response:
 	    if "CreateStorageLocationResult" in response["CreateStorageLocationResponse"]:
 		if "S3Bucket" in response["CreateStorageLocationResponse"]["CreateStorageLocationResult"]:
 		    return response["CreateStorageLocationResponse"]["CreateStorageLocationResult"]["S3Bucket"] 
-	sys.exit("Error: Failed to get the Amazon S3 bucket name")
+	sys.exit("\033[91mError: Failed to get the Amazon S3 bucket name\033[0m")
 
     def upload_file(self, bucket_name, archived_file):
 	name = os.path.basename(archived_file)
@@ -148,20 +148,20 @@ class DevTools:
 	try:
 	    deployment_response = self.eb.update_environment(environment_name=self.ENVIRONMENT_NAME, version_label = version_label)
 	except InsufficientPrivileges as e: 
-	    sys.exit("Error: Insufficient permissions to create the AWS Elastic Beanstalk application version. You must use AWS credentials that have the correct AWS Elastic Beanstalk permissions")
+	    sys.exit("\033[91mError: Insufficient permissions to create the AWS Elastic Beanstalk application version. You must use AWS credentials that have the correct AWS Elastic Beanstalk permissions\033[0m")
 	except Exception as e:
-	    sys.exit("Error: Failed to update the AWS Elastic Beanstalk environment")
+	    sys.exit("\033[91mError: Failed to update the AWS Elastic Beanstalk environment\033[0m")
  
     def create_eb_application_version(self, commit_message, bucket_name, archived_file_name, version_label):
 	try:
 	    response = self.eb.create_application_version(self.APPLICATION_NAME, version_label, commit_message, bucket_name, archived_file_name)
 	    return version_label 
 	except TooManyApplications as e:
-	    sys.exit("Error: You have exceeded the number of AWS Elastic Beanstalk applications for your account. For more information, see AWS Service Limits in the AWS General Reference")
+	    sys.exit("\033[91mError: You have exceeded the number of AWS Elastic Beanstalk applications for your account. For more information, see AWS Service Limits in the AWS General Reference\033[0m")
 	except TooManyApplicationVersions as e:
-	    sys.exit("Error: You have exceeded the number of AWS Elastic Beanstalk application versions for your account. For more information, see AWS Service Limits in the AWS General Reference")
+	    sys.exit("\033[91mError: You have exceeded the number of AWS Elastic Beanstalk application versions for your account. For more information, see AWS Service Limits in the AWS General Reference\033[0m")
 	except InsufficientPrivileges as e:
-	    sys.exit("Error: Insufficient permissions to update the AWS Elastic Beanstalk environment. You must use AWS credentials that have the correct AWS Elastic Beanstalk permissions")
+	    sys.exit("\033[91mError: Insufficient permissions to update the AWS Elastic Beanstalk environment. You must use AWS credentials that have the correct AWS Elastic Beanstalk permissions\033[0m")
 	except Exception as e:
 	    sys.exit("\033[91mError: Failed to create the AWS Elastic Beanstalk application version: %s \033[0m" % e)
 
