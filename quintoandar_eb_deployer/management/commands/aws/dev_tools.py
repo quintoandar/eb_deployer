@@ -31,8 +31,10 @@ import shutil
 
 class DevTools:
 
-
+	
     def __init__(self, access_key, secret_key, region, environment_name, application_name):
+	reload(sys);
+	sys.setdefaultencoding("utf8")
 	self.eb = None
 	self.s3 = None
 	self.ACCESS_KEY = access_key
@@ -101,7 +103,7 @@ class DevTools:
         try: 
 	    commit_message = check_output("git log -1 --pretty=format:%s {0}".format(commit), shell=True)
 	    if commit_message:
-		return commit_message.encode('utf-8').strip()
+		return commit_message.strip()
         except (CalledProcessError, OSError) as e:
 	    return None
 
