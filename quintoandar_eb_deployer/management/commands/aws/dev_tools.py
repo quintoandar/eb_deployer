@@ -144,7 +144,13 @@ class DevTools:
 	name = os.path.basename(archived_file)
 	bkt = self.s3.get_bucket(bucket_name)
 	key = boto.s3.key.Key(bkt, name)
-	key.set_contents_from_filename(archived_file)
+	key.set_contents_from_filename(archived_file, cb=self.show_progress, num_cb=100)
+
+    def show_progress(self, so_far, total):
+	sys.stdout.write('\r%d bytes transferred out of %d (%d%%)' % (so_far, total, so_far*100/total))
+	sys.stdout.flush()
+	if so_far == total:
+		sys.stdout.write('\n')
 
     def update_environment(self, version_label):
 	try:
