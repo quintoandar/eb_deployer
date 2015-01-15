@@ -48,12 +48,13 @@ class Command(BaseCommand):
 		SLACK_URL = EB_DEPLOYER_SETTINGS.get("SLACK_URL")
 		
 		if SLACK_URL:
+			username = subprocess.check_output('git config user.name', shell=True).rstrip('\n')
 			commitmessage = subprocess.check_output('git log -1 --pretty=%B', shell=True)
 			reponame = subprocess.check_output('remote=$(git config --get branch.master.remote);url=$(git config --get remote.$remote.url);basename=$(basename "$url" .git);echo $basename', shell=True).rstrip('\n')
 			slack_message = {
-				"fallback": 'Deploying ' + reponame + ' to ' + ENV + ': ' + commitmessage,
+				"fallback": username + ' is deploying ' + reponame + ' to ' + ENV + ': ' + commitmessage,
 				"color": "#00ADEF", 
-				"pretext": 'Deploying ' + reponame + ' to ' + ENV,
+				"pretext": username + ' is deploying ' + reponame + ' to ' + ENV,
 				"fields": [ 
 					{ 
 						"value": "Commit: " + commitmessage, 
