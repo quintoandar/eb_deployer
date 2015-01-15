@@ -49,8 +49,20 @@ class Command(BaseCommand):
 		
 		if SLACK_URL:
 			commitmessage = subprocess.check_output('git log -1 --pretty=%B', shell=True)
-			slack_message = 'Deploying SEARCH to ' + ENV + ': ' + commitmessage
-			urllib2.build_opener(urllib2.HTTPCookieProcessor()).open(SLACK_URL, 'payload=%s' % json.dumps({"text": slack_message}));
+			reponame = subprocess.check_output('remote=$(git config --get branch.master.remote);url=$(git config --get remote.$remote.url);basename=$(basename "$url" .git);echo $basename', shell=True).rstrip('\n')
+			slack_message = {
+				"fallback": 'Deploying ' + reponame + ' to ' + ENV + ': ' + commitmessage,
+				"color": "#00ADEF", 
+				"pretext": 'Deploying ' + reponame + ' to ' + ENV,
+				"fields": [ 
+					{ 
+						"value": "Commit: " + commitmessage, 
+						"short": False
+					} 
+				] 
+			} 
+			
+			urllib2.build_opener(urllib2.HTTPCookieProcessor()).open(SLACK_URL, '%s' % json.dumps(slack_message));
 
 		print 'Deploying to: ' + ENV + '...'
 
