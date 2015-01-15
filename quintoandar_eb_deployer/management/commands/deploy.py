@@ -3,6 +3,8 @@ from optparse import make_option
 from quintoandar_eb_deployer.app_settings import *
 import subprocess
 import os
+import urllib2
+import json
 
 class Command(BaseCommand):
 
@@ -43,8 +45,13 @@ class Command(BaseCommand):
 		REGION = EB_DEPLOYER_SETTINGS.get(ENV).get("REGION")
 		ENVIRONMENT_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("ENVIRONMENT_NAME")
 		APPLICATION_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("APPLICATION_NAME")
+		SLACK_URL = EB_DEPLOYER_SETTINGS.get("SLACK_URL")
 		
-		
+		if SLACK_URL:
+			commitmessage = subprocess.check_output('git log -1 --pretty=%B', shell=True)
+			slack_message = 'Deploying SEARCH to ' + ENV + ': ' + commitmessage
+			urllib2.build_opener(urllib2.HTTPCookieProcessor()).open(SLACK_URL, 'payload=%s' % json.dumps({"text": slack_message}));
+
 		print 'Deploying to: ' + ENV + '...'
 
 		eb_update_command = [
