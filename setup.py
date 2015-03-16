@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
     name='quintoandar_eb_deployer',
     description='Make your project publishes itself to AWS',
-    version='1.3',
+    version='1.4',
     author='Diego Queiroz',
     author_email='diego.queiroz@gmail.com',
     license='MIT',

@@ -88,7 +88,6 @@ class Command(BaseCommand):
 			
 			os.chdir('search_py/static/minified')
 			
-			import subprocess
 			try:
 				prog = subprocess.Popen(['jsx','--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			except:
