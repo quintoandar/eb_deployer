@@ -85,10 +85,21 @@ class Command(BaseCommand):
 			print 'Skiping static files...'
 		else:
 			print 'Compiling static files...'		
+			
 			os.chdir('search_py/static/minified')
 			
+			import subprocess
+			try:
+				prog = subprocess.Popen(['jsx','--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			except:
+				print "jsx not installed, try running: npm install -g react-tools"
+				return 1		
+			
+			self.cmd(['jsx', '../js/', './js/'])
+			
 			self.cmd(['./minifyStatic.sh', './GoogleClosure/compiler.jar', './YahooUIOptimizator/yuicompressor-2.4.7.jar'])
-
+			
+			
 			print 'Pushing static files to S3...'
 			if ENV == 'forno':
 				self.cmd([
@@ -159,7 +170,7 @@ class Command(BaseCommand):
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
 					'put',
-					'../js/*.js', 
+					'./js/*.js', 
 					's3://5ares/searchStaticProducao/js/',
 					'--config=../../../s3cmd.conf'
 				])
