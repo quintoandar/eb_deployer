@@ -32,6 +32,13 @@ class Command(BaseCommand):
 				)
   
 	def handle(self, *args, **options):
+		
+		try:
+			prog = subprocess.Popen(['jsx','--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		except:
+			print "jsx not installed, try running: npm install -g react-tools"
+			return 1
+		
 		ENV = options.get('environment')
 
 		if not ENV or (ENV != 'producao' and ENV != 'forno'):
@@ -87,12 +94,6 @@ class Command(BaseCommand):
 			print 'Compiling static files...'		
 			
 			os.chdir('search_py/static/minified')
-			
-			try:
-				prog = subprocess.Popen(['jsx','--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-			except:
-				print "jsx not installed, try running: npm install -g react-tools"
-				return 1		
 			
 			self.cmd(['jsx', '../js/', './js/'])
 			
