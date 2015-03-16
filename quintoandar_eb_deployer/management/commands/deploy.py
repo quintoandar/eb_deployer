@@ -37,7 +37,7 @@ class Command(BaseCommand):
 			prog = subprocess.Popen(['jsx','--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		except:
 			print "jsx not installed, try running: npm install -g react-tools"
-			return 1
+			return "jsx not installed, try running: npm install -g react-tools"
 		
 		ENV = options.get('environment')
 
