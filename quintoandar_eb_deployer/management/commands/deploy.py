@@ -129,6 +129,20 @@ class Command(BaseCommand):
 					's3://5ares/searchStatic/css/',
 					'--config=../../../s3cmd.conf'
 				])
+				self.cmd([
+					'./s3cmd/s3cmd',
+					#'--dry-run',
+					'--access_key=' + ACCESS_KEY,
+					'--secret_key=' + SECRET_KEY,
+					'--mime-type=text/css', 
+					'-P',
+					'--add-header="Cache-Control: max-age=60"', 
+					'--add-header="Content-Encoding: gzip"',
+					'sync', 	
+					'../css/fonts/*', 
+					's3://5ares/searchStatic/css/fonts',
+					'--config=../../../s3cmd.conf'
+				])
 			elif ENV == 'producao':
 				self.cmd([
 					'./s3cmd/s3cmd',
