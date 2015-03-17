@@ -139,8 +139,8 @@ class Command(BaseCommand):
 					'--add-header="Cache-Control: max-age=60"', 
 					'--add-header="Content-Encoding: gzip"',
 					'sync', 	
-					'../css/fonts/*', 
-					's3://5ares/searchStatic/css/fonts',
+					'../fonts/*', 
+					's3://5ares/searchStatic/fonts/',
 					'--config=../../../s3cmd.conf'
 				])
 			elif ENV == 'producao':
