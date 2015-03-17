@@ -137,7 +137,6 @@ class Command(BaseCommand):
 					'--mime-type=text/css', 
 					'-P',
 					'--add-header="Cache-Control: max-age=60"', 
-					'--add-header="Content-Encoding: gzip"',
 					'sync', 	
 					'../fonts/*', 
 					's3://5ares/searchStatic/fonts/',
