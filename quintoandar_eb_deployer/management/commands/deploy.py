@@ -100,104 +100,78 @@ class Command(BaseCommand):
 			
 			
 			print 'Pushing static files to S3...'
+			
 			if ENV == 'forno':
-				self.cmd([
-					'./s3cmd/s3cmd',
-					#'--dry-run',
-					'--access_key=' + ACCESS_KEY,
-					'--secret_key=' + SECRET_KEY,
-					'--mime-type=application/x-javascript', 
-					'-P',
-					'--add-header="Cache-Control: max-age=60"', 
-					'--add-header="Content-Encoding: gzip"',
-					'sync', 	
-					'./*_f.js.jgz', 
-					's3://5ares/searchStatic/js/',
-					'--config=../../../s3cmd.conf'
-				])
-				self.cmd([
-					'./s3cmd/s3cmd',
-					#'--dry-run',
-					'--access_key=' + ACCESS_KEY,
-					'--secret_key=' + SECRET_KEY,
-					'--mime-type=text/css', 
-					'-P',
-					'--add-header="Cache-Control: max-age=60"', 
-					'--add-header="Content-Encoding: gzip"',
-					'sync', 	
-					'./*_f.cgz', 
-					's3://5ares/searchStatic/css/',
-					'--config=../../../s3cmd.conf'
-				])
-				self.cmd([
-					'./s3cmd/s3cmd',
-					#'--dry-run',
-					'--access_key=' + ACCESS_KEY,
-					'--secret_key=' + SECRET_KEY,
-					'-P',
-					'--add-header="Cache-Control: max-age=60"', 
-					'sync', 	
-					'../fonts/*', 
-					's3://5ares/searchStatic/fonts/',
-					'--config=../../../s3cmd.conf'
-				])
+				folder = 'searchStatic'
 			elif ENV == 'producao':
-				self.cmd([
-					'./s3cmd/s3cmd',
-					#'--dry-run',
-					'--access_key=' + ACCESS_KEY,
-					'--secret_key=' + SECRET_KEY,
-					'--mime-type=application/x-javascript', 
-					'-P',
-					'--add-header="Cache-Control: max-age=60"', 
-					'--add-header="Content-Encoding: gzip"',
-					'sync', 	
-					'./*.js.jgz', 
-					'--exclude="*_f.js.jgz"',
-					's3://5ares/searchStaticProducao/js/',
-					'--config=../../../s3cmd.conf'
-				])
-				self.cmd([
-					'./s3cmd/s3cmd',
-					#'--dry-run',
-					'--access_key=' + ACCESS_KEY,
-					'--secret_key=' + SECRET_KEY,
-					'--mime-type=text/css', 
-					'-P',
-					'--add-header="Cache-Control: max-age=60"', 
-					'--add-header="Content-Encoding: gzip"',
-					'sync', 	
-					'./*.cgz', 
-					'--exclude="*_f.cgz"',
-					's3://5ares/searchStaticProducao/css/',
-					'--config=../../../s3cmd.conf'
-				])
-				self.cmd([
-					'./s3cmd/s3cmd',
-					#'--dry-run',
-					'--access_key=' + ACCESS_KEY,
-					'--secret_key=' + SECRET_KEY,
-					'--mime-type=application/x-javascript', 
-					'-P',
-					'--add-header="Cache-Control: max-age=60"', 
-					'put',
-					'./js/*.js', 
-					's3://5ares/searchStaticProducao/js/',
-					'--config=../../../s3cmd.conf'
-				])
-				self.cmd([
-					'./s3cmd/s3cmd',
-					#'--dry-run',
-					'--access_key=' + ACCESS_KEY,
-					'--secret_key=' + SECRET_KEY,
-					'--mime-type=text/css', 
-					'-P',
-					'--add-header="Cache-Control: max-age=60"', 
-					'put', 	
-					'../css/*.css', 
-					's3://5ares/searchStaticProducao/css/',
-					'--config=../../../s3cmd.conf'
-				])
+				folder = 'searchStaticProducao'
+			
+			#UPLOAD MINIFIED AND COMPRESSED JS FILES
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'--mime-type=application/x-javascript', 
+				'-P',
+				'--add-header="Cache-Control: max-age=60"', 
+				'--add-header="Content-Encoding: gzip"',
+				'sync', 	
+				'./*.js.jgz', 
+				's3://5ares/' + folder + '/js/',
+				'--config=../../../s3cmd.conf'
+			])
+			
+			#UPLOAD MINIFIED AND COMPRESSED CSS FILES
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'--mime-type=text/css', 
+				'-P',
+				'--add-header="Cache-Control: max-age=60"', 
+				'--add-header="Content-Encoding: gzip"',
+				'sync', 	
+				'./*.cgz', 
+				's3://5ares/' + folder + '/css/',
+				'--config=../../../s3cmd.conf'
+			])
+			
+			#UPLOAD JSX COMPILED JS FILES			
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'-P',
+				'--add-header="Cache-Control: max-age=60"',
+				'sync',
+				'./js/*',
+				's3://5ares/' + folder + '/',
+				'--config=../../../s3cmd.conf',
+				'--include=*.js'
+			])
+			
+			#UPLOAD OTHER FILES
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'-P',
+				'--add-header="Cache-Control: max-age=60"',
+				'sync',
+				'../*',
+				's3://5ares/' + folder + '/',
+				'--config=../../../s3cmd.conf',
+				'--exclude=*.js',
+				'--exclude=*.jgz',
+				'--exclude=*.cgz' ,
+				'--exclude=./minified/*',
+				'--exclude=.DS_Store',
+				'--exclude=./img/*'
+			])
 
 			print 'Done pushing static files to S3!'
 
