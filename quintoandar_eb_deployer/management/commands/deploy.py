@@ -153,6 +153,34 @@ class Command(BaseCommand):
 				'--include=*.js'
 			])
 			
+			#UPLOAD MINIFIED JS FILES			
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'-P',
+				'--add-header="Cache-Control: max-age=60"',
+				'sync',
+				'./*.js',
+				's3://5ares/' + folder + '/js/',
+				'--config=../../../s3cmd.conf'
+			])
+			
+			#UPLOAD MINIFIED CSS FILES			
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'-P',
+				'--add-header="Cache-Control: max-age=60"',
+				'sync',
+				'./*.css',
+				's3://5ares/' + folder + '/css/',
+				'--config=../../../s3cmd.conf'
+			])
+			
 			#UPLOAD OTHER FILES
 			self.cmd([
 				'./s3cmd/s3cmd',
