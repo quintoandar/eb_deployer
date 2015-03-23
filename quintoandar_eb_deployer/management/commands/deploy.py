@@ -148,7 +148,7 @@ class Command(BaseCommand):
 				'--add-header="Cache-Control: max-age=60"',
 				'sync',
 				'./js/*',
-				's3://5ares/' + folder + '/',
+				's3://5ares/' + folder + '/js/',
 				'--config=../../../s3cmd.conf',
 				'--include=*.js'
 			])
@@ -160,6 +160,7 @@ class Command(BaseCommand):
 				'--access_key=' + ACCESS_KEY,
 				'--secret_key=' + SECRET_KEY,
 				'-P',
+				'--recursive',
 				'--add-header="Cache-Control: max-age=60"',
 				'sync',
 				'../*',
