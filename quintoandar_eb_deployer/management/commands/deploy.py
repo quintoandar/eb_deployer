@@ -191,7 +191,7 @@ class Command(BaseCommand):
 				'--add-header="Cache-Control: max-age=60"',
 				'--add-header="Content-type: application/x-font-woff"',
 				'sync',
-				'./*.woff',
+				'./fonts/*.woff',
 				's3://5ares/' + folder + '/fonts/',
 				'--config=../../../s3cmd.conf'
 			])
