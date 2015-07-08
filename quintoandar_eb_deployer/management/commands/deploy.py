@@ -181,6 +181,21 @@ class Command(BaseCommand):
 				'--config=../../../s3cmd.conf'
 			])
 			
+			#UPLOAD FONTS WOFF FILES
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'-P',
+				'--add-header="Cache-Control: max-age=60"',
+				'--add-header="Content-type: application/x-font-woff"',
+				'sync',
+				'./*.woff',
+				's3://5ares/' + folder + '/fonts/',
+				'--config=../../../s3cmd.conf'
+			])
+			
 			#UPLOAD OTHER FILES
 			self.cmd([
 				'./s3cmd/s3cmd',
@@ -199,7 +214,10 @@ class Command(BaseCommand):
 				'--exclude=*.cgz' ,
 				'--exclude=./minified/*',
 				'--exclude=.DS_Store',
-				'--exclude=./img/*'
+				'--exclude=./img/*',
+				'--exclude=*.woff',
+				'--exclude=./quintoandaricons-preview.html'
+				
 			])
 
 			print 'Done pushing static files to S3!'
