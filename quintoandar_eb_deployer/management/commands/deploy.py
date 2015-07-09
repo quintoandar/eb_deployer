@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
 	option_list = BaseCommand.option_list + (
 					make_option('--environment', '-e',
-						help='Set deployment environment; Values: (producao|forno)'
+						help='Set deployment environment; Values: (%s)' % "|".join(EB_DEPLOYER_SETTINGS.get("envs").keys())
 					),
 					make_option('--commit', '-c',
 						help='Commit hash to rollback to'
@@ -33,24 +33,20 @@ class Command(BaseCommand):
   
 	def handle(self, *args, **options):
 		
-		try:
-			prog = subprocess.Popen(['jsx','--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		except:
-			return "jsx not installed, try running: npm install -g react-tools"
-		
 		ENV = options.get('environment')
 
-		if not ENV or (ENV != 'producao' and ENV != 'forno'):
-			print 'Especify an environment: -e (producao|forno)'
+		if not ENV or (ENV not in EB_DEPLOYER_SETTINGS.get("envs").keys()):
+			print 'Especify an environment: -e (%s)' % "|".join(EB_DEPLOYER_SETTINGS.get("envs").keys())
 			return
 
 		COMMIT = options.get('commit')
 		SKIP_STATIC = options.get('skip_static')
 		ACCESS_KEY = options.get('access_key')
 		SECRET_KEY = options.get('secret_key')
-		REGION = EB_DEPLOYER_SETTINGS.get(ENV).get("REGION")
-		ENVIRONMENT_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("ENVIRONMENT_NAME")
-		APPLICATION_NAME = EB_DEPLOYER_SETTINGS.get(ENV).get("APPLICATION_NAME")
+		REGION = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("REGION")
+		ENVIRONMENT_NAME = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("ENVIRONMENT_NAME")
+		APPLICATION_NAME = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("APPLICATION_NAME")
+		STATIC_FILES_SCRIPT = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("STATIC_FILES_SCRIPT")
 		SLACK_URL = EB_DEPLOYER_SETTINGS.get("SLACK_URL")
 		
 		if SLACK_URL:
@@ -84,160 +80,15 @@ class Command(BaseCommand):
 		]
 		if COMMIT:
 			eb_update_command.append('--commit='+COMMIT)
-
+		
 		self.cmd(eb_update_command)
 
-		if SKIP_STATIC:
-			print 'Skiping static files...'
-		else:
-			print 'Compiling static files...'		
-			
-			os.chdir('search_py/static/minified')
-			
-			self.cmd(['jsx', '../js/', './js/'])
-			
-			self.cmd(['./minifyStatic.sh', './GoogleClosure/compiler.jar', './YahooUIOptimizator/yuicompressor-2.4.7.jar'])
-			
-			
-			print 'Pushing static files to S3...'
-			
-			if ENV == 'forno':
-				folder = 'searchStatic'
-			elif ENV == 'producao':
-				folder = 'searchStaticProducao'
-			
-			#UPLOAD MINIFIED AND COMPRESSED JS FILES
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'--mime-type=application/x-javascript', 
-				'-P',
-				'--add-header="Cache-Control: max-age=60"', 
-				'--add-header="Content-Encoding: gzip"',
-				'sync', 	
-				'./*.js.jgz', 
-				's3://5ares/' + folder + '/js/',
-				'--config=../../../s3cmd.conf'
-			])
-			
-			#UPLOAD MINIFIED AND COMPRESSED CSS FILES
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'--mime-type=text/css', 
-				'-P',
-				'--add-header="Cache-Control: max-age=60"', 
-				'--add-header="Content-Encoding: gzip"',
-				'sync', 	
-				'./*.cgz', 
-				's3://5ares/' + folder + '/css/',
-				'--config=../../../s3cmd.conf'
-			])
-			
-			#UPLOAD JSX COMPILED JS FILES			
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'-P',
-				'--add-header="Cache-Control: max-age=60"',
-				'sync',
-				'./js/*',
-				's3://5ares/' + folder + '/js/',
-				'--config=../../../s3cmd.conf',
-				'--include=*.js'
-			])
-			
-			#UPLOAD MINIFIED JS FILES			
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'-P',
-				'--add-header="Cache-Control: max-age=60"',
-				'sync',
-				'./*.js',
-				's3://5ares/' + folder + '/js/',
-				'--config=../../../s3cmd.conf'
-			])
-			
-			#UPLOAD MINIFIED CSS FILES			
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'--mime-type=text/css', 
-				'-P',
-				'--add-header="Cache-Control: max-age=60"',
-				'sync',
-				'./*.css',
-				's3://5ares/' + folder + '/css/',
-				'--config=../../../s3cmd.conf'
-			])
-			
-			#UPLOAD FONTS WOFF FILES
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'-P',
-				'--add-header="Cache-Control: max-age=60"',
-				'--add-header="Content-type: application/x-font-woff"',
-				'sync',
-				'./fonts/*.woff',
-				's3://5ares/' + folder + '/fonts/',
-				'--config=../../../s3cmd.conf'
-			])
-			
-			#UPLOAD FONTS CSS FILES
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'--mime-type=text/css', 
-				'-P',
-				'--add-header="Cache-Control: max-age=60"',
-				'sync',
-				'./fonts/*.css',
-				's3://5ares/' + folder + '/fonts/',
-				'--config=../../../s3cmd.conf'
-			])
-			
-			#UPLOAD OTHER FILES
-			self.cmd([
-				'./s3cmd/s3cmd',
-				#'--dry-run',
-				'--access_key=' + ACCESS_KEY,
-				'--secret_key=' + SECRET_KEY,
-				'-P',
-				'--recursive',
-				'--add-header="Cache-Control: max-age=60"',
-				'sync',
-				'../*',
-				's3://5ares/' + folder + '/',
-				'--config=../../../s3cmd.conf',
-				'--exclude=*.js',
-				'--exclude=*.jgz',
-				'--exclude=*.cgz' ,
-				'--exclude=./minified/*',
-				'--exclude=.DS_Store',
-				'--exclude=./img/*',
-				'--exclude=./fonts/*.woff',
-				'--exclude=./fonts/*.css',
-				'--exclude=./quintoandaricons-preview.html'
-				
-			])
-
-			print 'Done pushing static files to S3!'
+		if STATIC_FILES_SCRIPT:
+			if SKIP_STATIC:
+				print 'Skiping static files script...'
+			else:
+				print 'Running static files script...'		
+				os.system("./%s %s %s %s" % (STATIC_FILES_SCRIPT, ENV, ACCESS_KEY, SECRET_KEY))
 
 		print 'Done deploying to: ' + ENV + '!'
 
