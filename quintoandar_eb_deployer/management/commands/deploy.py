@@ -173,6 +173,7 @@ class Command(BaseCommand):
 				#'--dry-run',
 				'--access_key=' + ACCESS_KEY,
 				'--secret_key=' + SECRET_KEY,
+				'--mime-type=text/css', 
 				'-P',
 				'--add-header="Cache-Control: max-age=60"',
 				'sync',
@@ -196,6 +197,21 @@ class Command(BaseCommand):
 				'--config=../../../s3cmd.conf'
 			])
 			
+			#UPLOAD FONTS CSS FILES
+			self.cmd([
+				'./s3cmd/s3cmd',
+				#'--dry-run',
+				'--access_key=' + ACCESS_KEY,
+				'--secret_key=' + SECRET_KEY,
+				'--mime-type=text/css', 
+				'-P',
+				'--add-header="Cache-Control: max-age=60"',
+				'sync',
+				'./fonts/*.css',
+				's3://5ares/' + folder + '/fonts/',
+				'--config=../../../s3cmd.conf'
+			])
+			
 			#UPLOAD OTHER FILES
 			self.cmd([
 				'./s3cmd/s3cmd',
@@ -215,7 +231,8 @@ class Command(BaseCommand):
 				'--exclude=./minified/*',
 				'--exclude=.DS_Store',
 				'--exclude=./img/*',
-				'--exclude=*.woff',
+				'--exclude=./fonts/*.woff',
+				'--exclude=./fonts/*.css',
 				'--exclude=./quintoandaricons-preview.html'
 				
 			])
