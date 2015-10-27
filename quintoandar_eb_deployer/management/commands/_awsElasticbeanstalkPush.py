@@ -21,7 +21,9 @@ import argparse
 from aws.dev_tools import * 
 
 if __name__ == "__main__":
-
+    main()
+    
+def main():
     env_message = """ENVIRONMENT is the name of an AWS Elastic Beanstalk environment. When this 
     option is used, the command updates the named environment instead of the default environment. 
     The default environment can be set by editing .elasticbeanstalk/config in the root of your 

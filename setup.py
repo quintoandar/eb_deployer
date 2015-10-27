@@ -31,5 +31,11 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Topic :: System :: Installation/Setup'
-    ]
+    ],
+    
+    entry_points={
+        'console_scripts': [
+            'ebdeployer=quintoandar_eb_deployer.management.commands._awsElasticbeanstalkPush:main',
+        ],
+    },
 )
