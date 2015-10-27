@@ -9,7 +9,7 @@ setup(
     author='Diego Queiroz',
     author_email='diego.queiroz@gmail.com',
     license='MIT',
-    url='teste.com',
+    url='github.com/diequeiroz/quintoandar_eb_deployer',
     long_description=open('README.rst').read(),
     packages=[
         'quintoandar_eb_deployer',
@@ -22,7 +22,7 @@ setup(
         'python_magic'
     ],
     classifiers=[
-        'Development Status :: 2 - Beta',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
