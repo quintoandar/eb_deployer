@@ -5,11 +5,11 @@ from setuptools import setup
 setup(
     name='quintoandar_eb_deployer',
     description='Make your project publishes itself to AWS',
-    version='2.1',
+    version='2.2',
     author='Diego Queiroz',
     author_email='diego.queiroz@gmail.com',
     license='MIT',
-    url='github.com/diequeiroz/quintoandar_eb_deployer',
+    url='https://github.com/diequeiroz/quintoandar_eb_deployer',
     long_description=open('README.rst').read(),
     packages=[
         'quintoandar_eb_deployer',
