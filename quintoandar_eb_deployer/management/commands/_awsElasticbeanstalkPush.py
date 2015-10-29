@@ -20,9 +20,6 @@
 import argparse 
 from aws.dev_tools import * 
 
-if __name__ == "__main__":
-    main()
-    
 def main():
     env_message = """ENVIRONMENT is the name of an AWS Elastic Beanstalk environment. When this 
     option is used, the command updates the named environment instead of the default environment. 
@@ -65,3 +62,6 @@ def main():
 
     dev_tools.push_changes(opts.get("env"), opts.get("commit"))
     print "\033[92mEnvironment update initiated successfully.\033[0m"
+
+if __name__ == "__main__":
+    main()
