@@ -81,7 +81,8 @@ class DevTools:
     def create_archive(self, commit, filename):
 	try:
 	    call("git archive {0} --format=zip > {1}".format(commit, filename), shell=True)
-            self.add_minified_files(filename)
+            if self.MINIFIED_SRC and self.MINIFIED_DST:
+                self.add_minified_files(filename)
 	except (CalledProcessError, OSError) as e:
 	    sys.exit("\033[91mError: Cannot archive your repository due to an unknown error\033[0m")
 
