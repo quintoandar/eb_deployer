@@ -86,7 +86,7 @@ class DevTools:
 	    sys.exit("\033[91mError: Cannot archive your repository due to an unknown error\033[0m")
 
     def add_minified_files(self, filename):
-        z = zipfile.ZipFile(filename, "a")
+        z = zipfile.ZipFile(filename, "a", zipfile.ZIP_DEFLATED)
         for (path, dirname, filelist) in os.walk(self.MINIFIED_SRC):
             for filename in filelist:
                 z.write(filename, self.MINIFIED_DST + filename)
