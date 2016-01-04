@@ -41,10 +41,13 @@ def main():
     parser.add_argument('-r','--region')
     parser.add_argument('-w','--environment-name')
     parser.add_argument('-x','--application-name')
+    parser.add_argument('-y','--minified-src')
+    parser.add_argument('-z','--minified-dst')
 
     args = parser.parse_args()
     opts = {}
-    dev_tools = DevTools(args.access_key, args.secret_key, args.region, args.environment_name, args.application_name)
+    dev_tools = DevTools(args.access_key, args.secret_key, args.region, args.environment_name, args.application_name,
+                         args.minified_src, args.minified_dst)
 
     if args.environment:
 	opts["env"] = args.environment

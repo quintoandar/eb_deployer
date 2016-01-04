@@ -9,8 +9,10 @@ from boto.beanstalk.exception import *
 import time 
 import sys
 import os
+import os.path
 import tempfile
 import shutil
+import zipfile
 
 #-*-python-*-
 
@@ -32,7 +34,7 @@ import shutil
 class DevTools:
 
 	
-    def __init__(self, access_key, secret_key, region, environment_name, application_name):
+    def __init__(self, access_key, secret_key, region, environment_name, application_name, minified_src, minified_dst):
 	reload(sys);
 	sys.setdefaultencoding("utf8")
 	self.eb = None
@@ -42,6 +44,8 @@ class DevTools:
 	self.REGION = region
 	self.ENVIRONMENT_NAME = environment_name
 	self.APPLICATION_NAME = application_name
+        self.MINIFIED_SRC = minified_src
+        self.MINIFIED_DST = minified_dst
 	self.initialize_clients()
 
     def check_credentials_provided(self):
@@ -77,8 +81,16 @@ class DevTools:
     def create_archive(self, commit, filename):
 	try:
 	    call("git archive {0} --format=zip > {1}".format(commit, filename), shell=True)
+            self.add_minified_files(filename)
 	except (CalledProcessError, OSError) as e:
 	    sys.exit("\033[91mError: Cannot archive your repository due to an unknown error\033[0m")
+
+    def add_minified_files(self, filename):
+        z = zipfile.ZipFile(filename, "a")
+        for (path, dirname, filelist) in os.walk(self.MINIFIED_SRC):
+            for filename in filelist:
+                z.write(filename, self.MINIFIED_DST + filename)
+        z.close()
 
     def commit_id(self, commit):
 	if not commit:

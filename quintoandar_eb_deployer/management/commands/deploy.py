@@ -46,6 +46,8 @@ class Command(BaseCommand):
 		REGION = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("REGION")
 		ENVIRONMENT_NAME = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("ENVIRONMENT_NAME")
 		APPLICATION_NAME = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("APPLICATION_NAME")
+		MINIFIED_SRC = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("MINIFIED_SRC")
+		MINIFIED_DST = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("MINIFIED_DST")
 		STATIC_FILES_SCRIPT = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("STATIC_FILES_SCRIPT")
 		SLACK_URL = EB_DEPLOYER_SETTINGS.get("SLACK_URL")
 		
@@ -67,6 +69,15 @@ class Command(BaseCommand):
 			
 			urllib2.build_opener(urllib2.HTTPCookieProcessor()).open(SLACK_URL, '%s' % json.dumps(slack_message));
 
+                print "Minifying and compressing data..."
+
+                if STATIC_FILES_SCRIPT:
+			if SKIP_STATIC:
+				print 'Skiping static files script...'
+			else:
+				print 'Running static files script...'		
+				os.system("./%s %s %s %s" % (STATIC_FILES_SCRIPT, ENV, ACCESS_KEY, SECRET_KEY))
+
 		print 'Deploying to: ' + ENV + '...'
 
 		eb_update_command = [
@@ -76,19 +87,14 @@ class Command(BaseCommand):
 			'--secret-key=' + SECRET_KEY,
 			'--region=' + REGION,
 			'--environment-name=' + ENVIRONMENT_NAME,
-			'--application-name=' + APPLICATION_NAME
+                        '--application-name=' + APPLICATION_NAME,
+                        '--minified-src=' + MINIFIED_SRC,
+                        '--minified-dst=' + MINIFIED_DST
 		]
 		if COMMIT:
 			eb_update_command.append('--commit='+COMMIT)
 		
 		self.cmd(eb_update_command)
-
-		if STATIC_FILES_SCRIPT:
-			if SKIP_STATIC:
-				print 'Skiping static files script...'
-			else:
-				print 'Running static files script...'		
-				os.system("./%s %s %s %s" % (STATIC_FILES_SCRIPT, ENV, ACCESS_KEY, SECRET_KEY))
 
 		print 'Done deploying to: ' + ENV + '!'
 
