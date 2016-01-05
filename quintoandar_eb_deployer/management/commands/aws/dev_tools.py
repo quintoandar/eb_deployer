@@ -90,7 +90,7 @@ class DevTools:
         z = zipfile.ZipFile(filename, "a", zipfile.ZIP_DEFLATED)
         for (path, dirname, filelist) in os.walk(self.MINIFIED_SRC):
             for filename in filelist:
-                z.write(filename, self.MINIFIED_DST + filename)
+                z.write(os.path.join(path, filename), self.MINIFIED_DST + filename)
         z.close()
 
     def commit_id(self, commit):

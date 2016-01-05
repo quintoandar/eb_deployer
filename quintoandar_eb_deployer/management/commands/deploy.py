@@ -87,10 +87,13 @@ class Command(BaseCommand):
 			'--secret-key=' + SECRET_KEY,
 			'--region=' + REGION,
 			'--environment-name=' + ENVIRONMENT_NAME,
-                        '--application-name=' + APPLICATION_NAME,
-                        '--minified-src=' + MINIFIED_SRC,
-                        '--minified-dst=' + MINIFIED_DST
-		]
+                        '--application-name=' + APPLICATION_NAME
+                ]
+                if MINIFIED_SRC and MINIFIED_DST:
+                        eb_update_command.extend([
+                                '--minified-src=' + MINIFIED_SRC,
+                                '--minified-dst=' + MINIFIED_DST
+                        ])
 		if COMMIT:
 			eb_update_command.append('--commit='+COMMIT)
 		
