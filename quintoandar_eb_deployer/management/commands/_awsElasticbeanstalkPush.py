@@ -43,11 +43,12 @@ def main():
     parser.add_argument('-x','--application-name')
     parser.add_argument('-y','--minified-src')
     parser.add_argument('-z','--minified-dst')
+    parser.add_argument('-i','--jenkins-id')
 
     args = parser.parse_args()
     opts = {}
     dev_tools = DevTools(args.access_key, args.secret_key, args.region, args.environment_name, args.application_name,
-                         args.minified_src, args.minified_dst)
+                         args.minified_src, args.minified_dst, args.jenkins_id)
 
     if args.environment:
 	opts["env"] = args.environment

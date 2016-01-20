@@ -29,6 +29,9 @@ class Command(BaseCommand):
 					make_option('--secret-key','-s',
 						help='AWS EB SECRET_KEY'
 					),
+					make_option('--id',
+						help='Jenkins build number'
+					),
 				)
   
 	def handle(self, *args, **options):
@@ -43,6 +46,7 @@ class Command(BaseCommand):
 		SKIP_STATIC = options.get('skip_static')
 		ACCESS_KEY = options.get('access_key')
 		SECRET_KEY = options.get('secret_key')
+		JENKINS_ID = options.get('id')
 		REGION = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("REGION")
 		ENVIRONMENT_NAME = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("ENVIRONMENT_NAME")
 		APPLICATION_NAME = EB_DEPLOYER_SETTINGS.get("envs").get(ENV).get("APPLICATION_NAME")
@@ -87,7 +91,8 @@ class Command(BaseCommand):
 			'--secret-key=' + SECRET_KEY,
 			'--region=' + REGION,
 			'--environment-name=' + ENVIRONMENT_NAME,
-                        '--application-name=' + APPLICATION_NAME
+			'--application-name=' + APPLICATION_NAME,
+			'--jenkins-id=' + JENKINS_ID
                 ]
                 if MINIFIED_SRC and MINIFIED_DST:
                         eb_update_command.extend([

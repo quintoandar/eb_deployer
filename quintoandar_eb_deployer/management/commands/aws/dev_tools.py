@@ -34,7 +34,8 @@ import zipfile
 class DevTools:
 
 	
-    def __init__(self, access_key, secret_key, region, environment_name, application_name, minified_src, minified_dst):
+    def __init__(self, access_key, secret_key, region, environment_name,
+                 application_name, minified_src, minified_dst, jenkins_id):
 	reload(sys);
 	sys.setdefaultencoding("utf8")
 	self.eb = None
@@ -46,7 +47,8 @@ class DevTools:
 	self.APPLICATION_NAME = application_name
         self.MINIFIED_SRC = minified_src
         self.MINIFIED_DST = minified_dst
-	self.initialize_clients()
+        self.JENKINS_ID = jenkins_id
+        self.initialize_clients()
 
     def check_credentials_provided(self):
 	if not self.ACCESS_KEY:
@@ -85,6 +87,12 @@ class DevTools:
 	    sys.exit("\033[91mError: Cannot archive your repository due to an unknown error\033[0m")
 	if self.MINIFIED_SRC and self.MINIFIED_DST:
 		self.add_minified_files(filename)
+	self.add_jenkins_id(filename)
+
+    def add_jenkins_id(self, filename):
+        z = zipfile.ZipFile(filename, "a", zipfile.ZIP_DEFLATED)
+        z.write('search_py/config/jenkins.py', 'JENKINS_ID="%s/\n' % self.jenkins_id)
+        z.close()
 
     def add_minified_files(self, filename):
         z = zipfile.ZipFile(filename, "a", zipfile.ZIP_DEFLATED)
