@@ -87,11 +87,12 @@ class DevTools:
 	    sys.exit("\033[91mError: Cannot archive your repository due to an unknown error\033[0m")
 	if self.MINIFIED_SRC and self.MINIFIED_DST:
 		self.add_minified_files(filename)
-	self.add_jenkins_id(filename)
+	if self.JENKINS_ID:
+		self.add_jenkins_id(filename)
 
     def add_jenkins_id(self, filename):
         z = zipfile.ZipFile(filename, "a", zipfile.ZIP_DEFLATED)
-        z.write('search_py/config/jenkins.py', 'JENKINS_ID="%s/\n' % self.jenkins_id)
+        z.write('search_py/config/jenkins.py', 'JENKINS_ID="%s/\n' % self.JENKINS_ID)
         z.close()
 
     def add_minified_files(self, filename):

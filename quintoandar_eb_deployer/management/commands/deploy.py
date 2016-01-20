@@ -91,9 +91,12 @@ class Command(BaseCommand):
 			'--secret-key=' + SECRET_KEY,
 			'--region=' + REGION,
 			'--environment-name=' + ENVIRONMENT_NAME,
-			'--application-name=' + APPLICATION_NAME,
-			'--jenkins-id=' + JENKINS_ID
+			'--application-name=' + APPLICATION_NAME
                 ]
+                if JENKINS_ID:
+                        eb_update_command.extend([
+                                '--jenkins-id=' + JENKINS_ID
+                        ])
                 if MINIFIED_SRC and MINIFIED_DST:
                         eb_update_command.extend([
                                 '--minified-src=' + MINIFIED_SRC,
