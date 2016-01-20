@@ -92,7 +92,7 @@ class DevTools:
 
     def add_jenkins_id(self, filename):
         z = zipfile.ZipFile(filename, "a", zipfile.ZIP_DEFLATED)
-        z.write('search_py/config/jenkins.py', 'JENKINS_ID="%s/\n' % self.JENKINS_ID)
+        z.writestr('search_py/config/jenkins.py', 'JENKINS_ID="%s/"\n' % self.JENKINS_ID)
         z.close()
 
     def add_minified_files(self, filename):
