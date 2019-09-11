@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
     name='quintoandar_eb_deployer',
     description='Make your project publishes itself to AWS',
-    version='2.9',
+    version='3.0',
     author='Diego Queiroz',
     author_email='diego.queiroz@gmail.com',
     license='MIT',
@@ -32,7 +32,7 @@ setup(
         'Programming Language :: Python',
         'Topic :: System :: Installation/Setup'
     ],
-    
+
     entry_points={
         'console_scripts': [
             'ebdeployer=quintoandar_eb_deployer.management.commands._awsElasticbeanstalkPush:main',
