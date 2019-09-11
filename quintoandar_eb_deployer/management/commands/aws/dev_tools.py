@@ -48,20 +48,10 @@ class DevTools:
         self.JENKINS_ID = jenkins_id
         self.initialize_clients()
 
-    def check_credentials_provided(self):
-	if not self.ACCESS_KEY:
-	    sys.exit("The AWS Access Key ID was not provided. To add it, run \"git aws.config\"")
-
-	if not self.SECRET_KEY:
-	    sys.exit("The AWS Secret Access Key was not provided. To add it, run \"git aws.config\"")
-
     def initialize_clients(self):
-	self.check_credentials_provided()
-	access_key = self.ACCESS_KEY
-	secret_key = self.SECRET_KEY
 	region = self.REGION
-	self.eb = boto.beanstalk.connect_to_region(region, aws_access_key_id=access_key, aws_secret_access_key=secret_key)
-	self.s3 = boto.connect_s3(access_key, secret_key)
+	self.eb = boto.beanstalk.connect_to_region(region)
+	self.s3 = boto.connect_s3()
 
     def commit_exists(self, commit):
 	try:
