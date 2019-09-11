@@ -72,7 +72,7 @@ class Command(BaseCommand):
 				print 'Skiping static files script...'
 			else:
 				print 'Running static files script...'
-				os.system("./%s %s %s %s %s" % (STATIC_FILES_SCRIPT, ENV, JENKINS_ID))
+				os.system("./%s %s %s" % (STATIC_FILES_SCRIPT, ENV, JENKINS_ID))
 
 		print 'Deploying to: ' + ENV + '...'
 
