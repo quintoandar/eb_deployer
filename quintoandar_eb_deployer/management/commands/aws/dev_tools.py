@@ -6,7 +6,7 @@ import boto
 import boto.beanstalk
 from boto.s3 import *
 from boto.beanstalk.exception import *
-import time 
+import time
 import sys
 import os
 import os.path
@@ -33,15 +33,13 @@ import zipfile
 
 class DevTools:
 
-	
-    def __init__(self, access_key, secret_key, region, environment_name,
+
+    def __init__(self, region, environment_name,
                  application_name, minified_src, minified_dst, jenkins_id):
 	reload(sys);
 	sys.setdefaultencoding("utf8")
 	self.eb = None
 	self.s3 = None
-	self.ACCESS_KEY = access_key
-	self.SECRET_KEY = secret_key
 	self.REGION = region
 	self.ENVIRONMENT_NAME = environment_name
 	self.APPLICATION_NAME = application_name
@@ -122,7 +120,7 @@ class DevTools:
 	return cmt_id
 
     def commit_message(self, commit):
-        try: 
+        try:
 	    commit_message = check_output("git log -1 --pretty=format:%s {0}".format(commit), shell=True)
 	    if commit_message:
 		return commit_message.strip()
@@ -135,7 +133,7 @@ class DevTools:
 	    if current_branch:
 		current_branch = current_branch.strip()
 	    if current_branch == "HEAD":
-		return None 
+		return None
 	    #beanstalk_config.branch_mappings[current_branch]
 	except (CalledProcessError, OSError) as e:
 	    sys.exit("\033[91mError: Cannot lookup current branch\033[0m")
@@ -149,7 +147,7 @@ class DevTools:
     def bucket_name(self):
 	try:
 	    response = self.eb.create_storage_location()
-	except TooManyBuckets: 
+	except TooManyBuckets:
 	    sys.exit("\033[91mError: You have exceeded the number of Amazon S3 buckets for your account\033[0m")
 	except InsufficientPrivileges:
 	    sys.exit("\033[91mError: Access was denied to the Amazon S3 bucket. You must use AWS credentials that have permissions to access the bucket\033[0m")
@@ -159,7 +157,7 @@ class DevTools:
 	if "CreateStorageLocationResponse" in response:
 	    if "CreateStorageLocationResult" in response["CreateStorageLocationResponse"]:
 		if "S3Bucket" in response["CreateStorageLocationResponse"]["CreateStorageLocationResult"]:
-		    return response["CreateStorageLocationResponse"]["CreateStorageLocationResult"]["S3Bucket"] 
+		    return response["CreateStorageLocationResponse"]["CreateStorageLocationResult"]["S3Bucket"]
 	sys.exit("\033[91mError: Failed to get the Amazon S3 bucket name\033[0m")
 
     def upload_file(self, bucket_name, archived_file):
@@ -177,16 +175,16 @@ class DevTools:
     def update_environment(self, version_label):
 	try:
 	    deployment_response = self.eb.update_environment(environment_name=self.ENVIRONMENT_NAME, version_label = version_label)
-	except InsufficientPrivileges as e: 
+	except InsufficientPrivileges as e:
 	    sys.exit("\033[91mError: Insufficient permissions to create the AWS Elastic Beanstalk application version. You must use AWS credentials that have the correct AWS Elastic Beanstalk permissions\033[0m")
 	except Exception as e:
 		print e
 		sys.exit("\033[91mError: Failed to update the AWS Elastic Beanstalk environment\033[0m")
- 
+
     def create_eb_application_version(self, commit_message, bucket_name, archived_file_name, version_label):
 	try:
 	    response = self.eb.create_application_version(self.APPLICATION_NAME, version_label, commit_message, bucket_name, archived_file_name)
-	    return version_label 
+	    return version_label
 	except TooManyApplications as e:
 	    sys.exit("\033[91mError: You have exceeded the number of AWS Elastic Beanstalk applications for your account. For more information, see AWS Service Limits in the AWS General Reference\033[0m")
 	except TooManyApplicationVersions as e:

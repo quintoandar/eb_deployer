@@ -17,17 +17,17 @@
 # specific language governing permissions and limitations under the
 # License.
 
-import argparse 
-from aws.dev_tools import * 
+import argparse
+from aws.dev_tools import *
 
 def main():
-    env_message = """ENVIRONMENT is the name of an AWS Elastic Beanstalk environment. When this 
-    option is used, the command updates the named environment instead of the default environment. 
-    The default environment can be set by editing .elasticbeanstalk/config in the root of your 
+    env_message = """ENVIRONMENT is the name of an AWS Elastic Beanstalk environment. When this
+    option is used, the command updates the named environment instead of the default environment.
+    The default environment can be set by editing .elasticbeanstalk/config in the root of your
     repository by running "git aws.config" """
 
     cmt_message = """COMMIT identifies a commit in the repository. For example, HEAD identifies
-    the commit that is currently checked out, or a SHA1 (possibly abbreviated) can be used to 
+    the commit that is currently checked out, or a SHA1 (possibly abbreviated) can be used to
     identify a specific commit from the history. When this option is used, the command uses the named
     commit instead of HEAD to create the version to be deployed to your environment. See the help for
     "git rev-parse" for a description of all the supported formats for identifying commits"""
@@ -35,9 +35,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-e", "--environment", help=env_message)
     parser.add_argument("-c", "--commit", help=cmt_message)
-
-    parser.add_argument('-a','--access-key')
-    parser.add_argument('-s','--secret-key')
     parser.add_argument('-r','--region')
     parser.add_argument('-w','--environment-name')
     parser.add_argument('-x','--application-name')
@@ -47,7 +44,7 @@ def main():
 
     args = parser.parse_args()
     opts = {}
-    dev_tools = DevTools(args.access_key, args.secret_key, args.region, args.environment_name, args.application_name,
+    dev_tools = DevTools(args.region, args.environment_name, args.application_name,
                          args.minified_src, args.minified_dst, args.jenkins_id)
 
     if args.environment:
