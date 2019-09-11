@@ -48,18 +48,18 @@ def main():
                          args.minified_src, args.minified_dst, args.jenkins_id)
 
     if args.environment:
-	opts["env"] = args.environment
+        opts["env"] = args.environment
 
     if args.commit:
-	if not dev_tools.commit_exists(args.commit):
-	    exit(1)
+        if not dev_tools.commit_exists(args.commit):
+            exit(1)
 
-	cmt_type = dev_tools.git_object_type(args.commit)
-	if "commit" != cmt_type:
-	    sys.stderr.write("{0} is a {1}. The value of the --commit option must refer to commit".format(args.commit, cmt_type))
-	    exit(1)
+        cmt_type = dev_tools.git_object_type(args.commit)
+        if "commit" != cmt_type:
+            sys.stderr.write("{0} is a {1}. The value of the --commit option must refer to commit".format(args.commit, cmt_type))
+            exit(1)
 
-	opts["commit"] = dev_tools.commit_id(args.commit)
+        opts["commit"] = dev_tools.commit_id(args.commit)
 
     dev_tools.push_changes(opts.get("env"), opts.get("commit"))
     print "\033[92mEnvironment update initiated successfully.\033[0m"
